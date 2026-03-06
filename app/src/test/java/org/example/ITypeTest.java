@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.example.Arithmetic.BinaryOperations;
-import org.example.Instructions.IType;
+import org.example.Instructions.Instruction;
 import org.example.Registers.RegisterFile;
 
 public class ITypeTest {
@@ -17,7 +17,7 @@ public class ITypeTest {
             r1.setRegisterArray(BinaryOperations.AddI(r1.getRegisterArray(), 5));
 
             // 1 addi r3,r1,#2
-            IType ins = new IType(1, "addi r3,r1,#2");
+            Instruction ins = Instruction.of(1, "addi r3,r1,#2");
             ins.execute(rf);
 
             assertEquals(rf.getRegister(3).getDecimal(), 7);
@@ -34,7 +34,7 @@ public class ITypeTest {
             r1.setRegisterArray(BinaryOperations.AddI(r1.getRegisterArray(), 5));
 
             // 1 subi r3,r1,#2
-            IType ins = new IType(1, "subi r3,r1,#2");
+            Instruction ins = Instruction.of(1, "subi r3,r1,#2");
             ins.execute(rf);
 
             assertEquals(rf.getRegister(3).getDecimal(), 3);
@@ -51,7 +51,7 @@ public class ITypeTest {
             r1.setRegisterArray(BinaryOperations.AddI(r1.getRegisterArray(), 5));
 
             // 1 muli r3,r1,#2
-            IType ins = new IType(1, "muli r3,r1,#2");
+            Instruction ins = Instruction.of(1, "muli r3,r1,#2");
             ins.execute(rf);
 
             assertEquals(rf.getRegister(3).getDecimal(), 10);
@@ -68,7 +68,7 @@ public class ITypeTest {
             r1.setRegisterArray(BinaryOperations.AddI(r1.getRegisterArray(), 32));
 
             // 1 divi r3,r1,#2
-            IType ins = new IType(1, "divi r3,r1,#2");
+            Instruction ins = Instruction.of(1, "divi r3,r1,#2");
             ins.execute(rf);
 
             assertEquals(rf.getRegister(3).getDecimal(), 16);

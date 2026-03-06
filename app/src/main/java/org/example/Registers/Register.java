@@ -21,6 +21,10 @@ public class Register implements Cloneable {
     }
 
     public void setRegisterArray(boolean[] newRegisterArray) {
+
+        if (this.registerID == 0) {
+            return;
+        }
         this.registerArray = newRegisterArray.clone();
         this.registerValue = Utils.bitArrayToTwosComplement(this.registerArray);
     }

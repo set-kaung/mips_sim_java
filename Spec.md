@@ -45,3 +45,19 @@
 - `add`/`sub`: throws on signed overflow or underflow
 - `div`: throws on division by zero
 - All operations: throws if the two source registers differ in bit-width
+
+### Ceaveats
+
+Write to register 0 are always ignored. It is a Special Purpose Register in this case.
+
+Opcode List
+
+mov - 00000
+add - 00001
+sub - 00010
+mul - 00011
+div - 00100
+addi - 00101
+subi - 00110
+muli - 00111
+divi - 01000

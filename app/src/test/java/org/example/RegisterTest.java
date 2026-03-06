@@ -14,7 +14,7 @@ public class RegisterTest {
         valNeg67[25] = false;
         valNeg67[30] = false;
 
-        Register reg1 = new Register(0, 32);
+        Register reg1 = new Register(1, 32);
         reg1.setRegisterArray(valNeg67);
 
         assertArrayEquals(new boolean[] { true, true, true, true, true, true, true, true, true, true, true, true, true,

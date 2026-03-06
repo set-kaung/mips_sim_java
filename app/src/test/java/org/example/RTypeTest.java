@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.example.Arithmetic.BinaryOperations;
-import org.example.Instructions.RType;
+import org.example.Instructions.Instruction;
 import org.example.Registers.RegisterFile;
 
 public class RTypeTest {
@@ -18,7 +18,7 @@ public class RTypeTest {
             r2.setRegisterArray(BinaryOperations.AddI(r2.getRegisterArray(), 2));
 
             // 1 add r3,r1,r2
-            RType ins = new RType(1, "add r3,r1,r2");
+            Instruction ins = Instruction.of(1, "add r3,r1,r2");
             ins.execute(rf);
 
             assertEquals(rf.getRegister(3).getDecimal(), 7);
@@ -37,7 +37,7 @@ public class RTypeTest {
             r2.setRegisterArray(BinaryOperations.AddI(r2.getRegisterArray(), 2));
 
             // 1 add r3,r1,r2
-            RType ins = new RType(1, "sub r3,r1,r2");
+            Instruction ins = Instruction.of(1, "sub r3,r1,r2");
             ins.execute(rf);
 
             assertEquals(rf.getRegister(3).getDecimal(), 3);
@@ -56,7 +56,7 @@ public class RTypeTest {
             r2.setRegisterArray(BinaryOperations.AddI(r2.getRegisterArray(), 2));
 
             // 1 add r3,r1,r2
-            RType ins = new RType(1, "mul r3,r1,r2");
+            Instruction ins = Instruction.of(1, "mul r3,r1,r2");
             ins.execute(rf);
 
             assertEquals(rf.getRegister(3).getDecimal(), 10);
@@ -75,7 +75,7 @@ public class RTypeTest {
             r2.setRegisterArray(BinaryOperations.AddI(r2.getRegisterArray(), 2));
 
             // 1 add r3,r1,r2
-            RType ins = new RType(1, "div r3,r1,r2");
+            Instruction ins = Instruction.of(1, "div r3,r1,r2");
             ins.execute(rf);
 
             assertEquals(rf.getRegister(3).getDecimal(), 16);

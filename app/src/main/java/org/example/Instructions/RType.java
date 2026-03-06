@@ -10,20 +10,14 @@ import org.example.Registers.Register;
 import org.example.Registers.RegisterFile;
 
 public final class RType extends Instruction {
-    private static final int INSTRUCTION_PART_COUNT = 2;
     private static final int OPERAND_PART_COUNT = 3;
-    private static final Splitter SPACE_SPLITTER = Splitter.on(' ');
     private static final Splitter COMMA_SPLITTER = Splitter.on(',');
 
-    public RType(int insID, String insLiteral) throws Exception {
+    RType(int insID, String insLiteral, String opcode, String operands) throws Exception {
         this.insID = insID;
         this.insLiteral = insLiteral;
-        List<String> parts = SPACE_SPLITTER.splitToList(Objects.requireNonNull(insLiteral));
-        if (parts.size() != INSTRUCTION_PART_COUNT) {
-            throw new Exception("wrong instruction format. expecting opcode register,register,register");
-        }
-        this.opcode = parts.get(0);
-        List<String> opStrs = COMMA_SPLITTER.splitToList(Objects.requireNonNull(parts.get(1)));
+        this.opcode = opcode;
+        List<String> opStrs = COMMA_SPLITTER.splitToList(Objects.requireNonNull(operands));
         if (opStrs.size() != OPERAND_PART_COUNT) {
             throw new Exception("wrong instruction format. expecting opcode register,register,register");
         }
@@ -64,4 +58,39 @@ public final class RType extends Instruction {
         }
         rd.setRegisterArray(result);
     }
+
+    @Override
+    public int[] getOperandRegisters() {
+        return this.operandRegisterIDs.clone();
+    }
+
+    @Override
+    public String toString() {
+        int rd = operandRegisterIDs[0];
+        int rs = operandRegisterIDs[1];
+        int rt = operandRegisterIDs[2];
+        String result;
+        switch (this.opcode) {
+            case "add":
+                if (rt == 0) {
+                    result = String.format("r%d <- r%d", rd, rs);
+                } else {
+                    result = String.format("r%d <- r%d + r%d", rd, rs, rt);
+                }
+                break;
+            case "sub":
+                result = String.format("r%d <- r%d - r%d", rd, rs, rt);
+                break;
+            case "mul":
+                result = String.format("r%d <- r%d * r%d", rd, rs, rt);
+                break;
+            case "div":
+                result = String.format("r%d <- r%d / r%d", rd, rs, rt);
+                break;
+            default:
+                result = "unsupported opcode";
+        }
+        return result;
+    }
+
 }
