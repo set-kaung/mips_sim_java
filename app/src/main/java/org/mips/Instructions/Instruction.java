@@ -48,5 +48,8 @@ public abstract class Instruction {
 
     public abstract int[] getOperandRegisters();
 
+    /** Returns the number of clock cycles this instruction takes to execute. */
+    public abstract int getCycles();
+
     public abstract void execute(RegisterFile rf) throws Exception;
 }

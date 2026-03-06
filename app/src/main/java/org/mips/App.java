@@ -27,6 +27,8 @@ public class App {
         RegisterFile rf = new RegisterFile(32, 32);
         String assemblyText = Files.readString(Path.of(args[0]), StandardCharsets.UTF_8);
         List<String> lines = NEWLINE_SPLITTER.splitToList(Objects.requireNonNull(assemblyText));
+        long totalCycles = 0;
+        int instructionCount = 0;
         for (String line : lines) {
             List<String> lineParts = SPACE_SPLITTER.splitToList(Objects.requireNonNull(line));
             if (lineParts.size() != INS_PARTS) {
@@ -35,13 +37,16 @@ public class App {
             int id = Integer.parseInt(lineParts.get(0));
             Instruction ins = Instruction.of(id, lineParts.get(1));
             ins.execute(rf);
+            int cycles = ins.getCycles();
+            totalCycles += cycles;
+            instructionCount++;
             int affectedRegisterID = ins.getOperandRegisters()[0];
             Register affectedRegister = rf.getRegister(affectedRegisterID);
             System.out.printf("%d %s%n", id, ins.getInstructionLiteral());
             System.out.println(ins);
-            System.out.printf("value of affected register: r%d = %d %s%n%n", affectedRegisterID,
+            System.out.printf("value of affected register: r%d = %d %s%n", affectedRegisterID,
                     affectedRegister.getDecimal(), affectedRegister);
         }
-
+        System.out.printf("CPI : %.2f%n", (double) totalCycles / instructionCount);
     }
 }

@@ -64,6 +64,18 @@ public final class IType extends Instruction {
     }
 
     @Override
+    public int getCycles() {
+        switch (this.opcode) {
+            case "muli":
+                return 4;
+            case "divi":
+                return 4;
+            default:
+                return 1;
+        }
+    }
+
+    @Override
     public String toString() {
         int rd = operandRegisterIDs[0];
         int rs = operandRegisterIDs[1];
