@@ -1,9 +1,9 @@
-package org.example.Registers;
+package org.mips.Registers;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.example.Arithmetic.Utils;
+import org.mips.Arithmetic.Utils;
 
 public class Register implements Cloneable {
     private int registerID;

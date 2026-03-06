@@ -1,12 +1,12 @@
-package org.example.Instructions;
+package org.mips.Instructions;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import com.google.common.base.Splitter;
+import org.mips.Registers.RegisterFile;
 
-import org.example.Registers.RegisterFile;
+import com.google.common.base.Splitter;
 
 public abstract class Instruction {
     private static final Set<String> PSEUDO_OPCODES = Set.of("mov");
