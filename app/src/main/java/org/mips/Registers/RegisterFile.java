@@ -1,4 +1,4 @@
-package org.example.Registers;
+package org.mips.Registers;
 
 import java.util.HashMap;
 

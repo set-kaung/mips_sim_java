@@ -1,4 +1,4 @@
-package org.example.Arithmetic;
+package org.mips.Arithmetic;
 
 public class Utils {
 

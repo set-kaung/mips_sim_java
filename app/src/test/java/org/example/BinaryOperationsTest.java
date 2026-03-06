@@ -1,10 +1,10 @@
 package org.example;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.mips.Arithmetic.BinaryOperations;
+import org.mips.Arithmetic.Utils;
 
-import org.example.Arithmetic.BinaryOperations;
-import org.example.Arithmetic.Utils;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BinaryOperationsTest {
     @Test

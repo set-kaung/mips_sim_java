@@ -1,11 +1,11 @@
 package org.example;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.mips.Arithmetic.BinaryOperations;
+import org.mips.Instructions.Instruction;
+import org.mips.Registers.RegisterFile;
 
-import org.example.Arithmetic.BinaryOperations;
-import org.example.Instructions.Instruction;
-import org.example.Registers.RegisterFile;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RTypeTest {
     @Test

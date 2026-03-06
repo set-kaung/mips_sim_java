@@ -1,4 +1,4 @@
-package org.example;
+package org.mips;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -6,9 +6,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
-import org.example.Instructions.Instruction;
-import org.example.Registers.Register;
-import org.example.Registers.RegisterFile;
+import org.mips.Instructions.Instruction;
+import org.mips.Registers.Register;
+import org.mips.Registers.RegisterFile;
 
 import com.google.common.base.Splitter;
 

@@ -1,4 +1,4 @@
-package org.example.Arithmetic;
+package org.mips.Arithmetic;
 
 import java.util.stream.IntStream;
 

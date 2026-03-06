@@ -1,7 +1,8 @@
 package org.example;
 
-import org.example.Arithmetic.Utils;
 import org.junit.jupiter.api.Test;
+import org.mips.Arithmetic.Utils;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;

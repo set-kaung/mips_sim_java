@@ -1,7 +1,8 @@
 package org.example;
 
-import org.example.Registers.Register;
 import org.junit.jupiter.api.Test;
+import org.mips.Registers.Register;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;

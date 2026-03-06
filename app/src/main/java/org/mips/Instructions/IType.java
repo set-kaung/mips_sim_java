@@ -1,13 +1,13 @@
-package org.example.Instructions;
+package org.mips.Instructions;
 
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.base.Splitter;
+import org.mips.Arithmetic.BinaryOperations;
+import org.mips.Registers.Register;
+import org.mips.Registers.RegisterFile;
 
-import org.example.Arithmetic.BinaryOperations;
-import org.example.Registers.Register;
-import org.example.Registers.RegisterFile;
+import com.google.common.base.Splitter;
 
 public final class IType extends Instruction {
     private static final int OPERAND_PART_COUNT = 3;
