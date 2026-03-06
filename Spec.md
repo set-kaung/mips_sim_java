@@ -107,11 +107,24 @@ $$\text{Execution Time} = \text{Total Cycles} \times T_{clock}$$
 
 where $T_{clock}$ is the period of one clock cycle (e.g. 1 ns for a 1 GHz CPU).
 
-### Implementation Notes
+### Implementation
 
-The simulator tracks CPI per instruction and accumulates a **total cycle count** over the program.
-After all instructions execute, it prints:
+The simulator tracks CPI per instruction and accumulates a **total cycle count** internally over the program.
 
-- Cycles consumed by each instruction
-- Total cycle count for the program
-- Average CPI across the program
+**Per-instruction output:**
+After each instruction executes, the simulator prints:
+
+```
+<line-number> <instruction>
+<decoded operation>
+value of affected register: r<N> = <decimal> [<binary array>]
+```
+
+**Program summary:**
+After all instructions complete, the average CPI is printed as a single line:
+
+```
+CPI : <average>
+```
+
+where `<average>` is the total accumulated cycles divided by the instruction count, formatted to two decimal places.

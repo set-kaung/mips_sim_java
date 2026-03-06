@@ -14,6 +14,7 @@ classDiagram
         +getInstructionId() int
         +getInstructionLiteral() String
         +getOperandRegisters()* int[]
+        +getCycles()* int
         +execute(RegisterFile rf)* void
     }
 
@@ -21,6 +22,7 @@ classDiagram
         <<final>>
         +execute(RegisterFile rf) void
         +getOperandRegisters() int[]
+        +getCycles() int
         +toString() String
     }
 
@@ -29,6 +31,7 @@ classDiagram
         -long immediate
         +execute(RegisterFile rf) void
         +getOperandRegisters() int[]
+        +getCycles() int
         +toString() String
     }
 
@@ -63,8 +66,14 @@ classDiagram
         +DivI(boolean[] a, long imm)$ boolean[]
     }
 
+    class App {
+        +main(String[] args)$ void
+    }
+
     Instruction <|-- RType
     Instruction <|-- IType
+    App ..> Instruction : creates via of()
+    App ..> RegisterFile : uses
     RType ..> RegisterFile : uses
     IType ..> RegisterFile : uses
     RegisterFile "1" *-- "0..32" Register : contains
