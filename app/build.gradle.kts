@@ -73,6 +73,15 @@ tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
     reports.create("xml") { required = true }
 }
 
+// Fat/executable JAR — bundles all runtime deps so the jar is self-contained
+tasks.named<Jar>("jar") {
+    manifest {
+        attributes["Main-Class"] = application.mainClass.get()
+    }
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 // Git pre-commit hook — runs `check` (tests + all static analysis) before every commit
 tasks.register("installGitHooks") {
     notCompatibleWithConfigurationCache("One-time setup task that writes to .git/hooks")

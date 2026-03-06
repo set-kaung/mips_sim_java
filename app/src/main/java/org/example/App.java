@@ -1,7 +1,7 @@
 package org.example;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
@@ -17,16 +17,15 @@ public class App {
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ').limit(2);
     private static final int INS_PARTS = 2;
 
-    public static void main(String[] args) throws Exception {
-        RegisterFile rf = new RegisterFile(32, 32);
-        String assemblyText;
+    private static final int MIN_ARG_COUNT = 1;
 
-        try (InputStream inputStream = App.class.getResourceAsStream("/test_asm.txt")) {
-            if (inputStream == null) {
-                throw new IOException("Resource not found: /test_asm.txt");
-            }
-            assemblyText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+    public static void main(String[] args) throws Exception {
+        if (args.length != MIN_ARG_COUNT) {
+            System.err.println("Usage: mips-sim <file.asm>");
+            System.exit(1);
         }
+        RegisterFile rf = new RegisterFile(32, 32);
+        String assemblyText = Files.readString(Path.of(args[0]), StandardCharsets.UTF_8);
         List<String> lines = NEWLINE_SPLITTER.splitToList(Objects.requireNonNull(assemblyText));
         for (String line : lines) {
             List<String> lineParts = SPACE_SPLITTER.splitToList(Objects.requireNonNull(line));
