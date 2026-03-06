@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.Arithmetic.Utils;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

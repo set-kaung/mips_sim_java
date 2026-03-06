@@ -1,7 +1,9 @@
-package org.example;
+package org.example.Registers;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import org.example.Arithmetic.Utils;
 
 public class Register implements Cloneable {
     private int registerID;

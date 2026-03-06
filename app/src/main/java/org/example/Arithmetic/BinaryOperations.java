@@ -1,4 +1,4 @@
-package org.example;
+package org.example.Arithmetic;
 
 import java.util.stream.IntStream;
 
@@ -120,5 +120,25 @@ public class BinaryOperations {
             res[i] = nVal;
         }
         return res;
+    }
+
+    public static boolean[] AddI(boolean[] A, long immediate) throws Exception {
+        boolean[] B = Utils.decimalToBooleanArray(immediate, A.length);
+        return Add(A, B);
+    }
+
+    public static boolean[] SubI(boolean[] A, long immediate) throws Exception {
+        boolean[] B = Utils.decimalToBooleanArray(immediate, A.length);
+        return Subtract(A, B);
+    }
+
+    public static boolean[] MulI(boolean[] A, long immediate) throws Exception {
+        boolean[] B = Utils.decimalToBooleanArray(immediate, A.length);
+        return Multiply(A, B);
+    }
+
+    public static boolean[] DivI(boolean[] A, long immediate) throws Exception {
+        boolean[] B = Utils.decimalToBooleanArray(immediate, A.length);
+        return Divide(A, B);
     }
 }

@@ -3,6 +3,9 @@ package org.example;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.example.Arithmetic.BinaryOperations;
+import org.example.Arithmetic.Utils;
+
 public class BinaryOperationsTest {
     @Test
     public void addTest() {
