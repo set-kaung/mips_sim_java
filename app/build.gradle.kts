@@ -78,6 +78,7 @@ tasks.named<Jar>("jar") {
     manifest {
         attributes["Main-Class"] = application.mainClass.get()
     }
+    archiveFileName.set("mips-sim.jar")
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
