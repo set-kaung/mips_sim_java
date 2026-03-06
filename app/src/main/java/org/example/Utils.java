@@ -14,7 +14,7 @@ public class Utils {
             for (int i = tempRegArr.length - 1; i >= 0; i--) {
                 boolean cValue = tempRegArr[i];
                 tempRegArr[i] = carry ^ cValue;
-                carry = cValue & carry;
+                carry = cValue && carry;
                 long nValue = tempRegArr[i] ? 1 : 0;
                 result += nValue << (l - i);
             }
@@ -31,12 +31,13 @@ public class Utils {
     public static long powerN(long number, int power) {
         long res = 1;
         long sq = number;
-        while (power > 0) {
-            if (power % 2 == 1) {
+        int p = power;
+        while (p > 0) {
+            if (p % 2 != 0) {
                 res *= sq;
             }
             sq = sq * sq;
-            power /= 2;
+            p /= 2;
         }
         return res;
     }
@@ -47,11 +48,11 @@ public class Utils {
             return res;
         }
         long original = decimal;
-        decimal = Math.abs(decimal);
+        long absDecimal = Math.abs(decimal);
         int idx = size - 1;
-        while (decimal != 0) {
-            res[idx] = decimal % 2 > 0 ? true : false;
-            decimal /= 2;
+        while (absDecimal != 0) {
+            res[idx] = absDecimal % 2 > 0;
+            absDecimal /= 2;
             idx -= 1;
         }
         if (original < 0) {
@@ -61,7 +62,7 @@ public class Utils {
             boolean carry = true;
             for (int i = size - 1; i >= 0; i--) {
                 boolean nVal = res[i] ^ carry;
-                carry = res[i] & carry;
+                carry = res[i] && carry;
                 res[i] = nVal;
             }
         }

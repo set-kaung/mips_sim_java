@@ -5,10 +5,15 @@
  * For more details on building Java & JVM projects, please refer to https://docs.gradle.org/9.4.0/userguide/building_java_projects.html in the Gradle documentation.
  */
 
+import net.ltgt.gradle.errorprone.errorprone
+
 plugins {
     java
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    pmd
+    id("com.github.spotbugs") version "6.0.27"
+    id("net.ltgt.errorprone") version "4.1.0"
 }
 
 repositories {
@@ -24,6 +29,9 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+
+    // ErrorProne
+    errorprone("com.google.errorprone:error_prone_core:2.36.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -41,4 +49,37 @@ application {
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+// ErrorProne — enable on all compile tasks
+tasks.withType<JavaCompile>().configureEach {
+    options.errorprone.isEnabled = true
+}
+
+// PMD — error-prone patterns and real bugs only (bestpractices excluded: too noisy on test code)
+pmd {
+    isConsoleOutput = true
+    ruleSets = listOf(
+        "category/java/errorprone.xml"
+    )
+}
+
+// SpotBugs — static bug detection
+spotbugs {
+    ignoreFailures = false
+}
+tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
+    reports.create("html") { required = true }
+    reports.create("xml") { required = true }
+}
+
+// Git pre-commit hook — runs `check` (tests + all static analysis) before every commit
+tasks.register("installGitHooks") {
+    notCompatibleWithConfigurationCache("One-time setup task that writes to .git/hooks")
+    doLast {
+        val hookFile = rootProject.file(".git/hooks/pre-commit")
+        hookFile.writeText("#!/bin/sh\n./gradlew check\n")
+        hookFile.setExecutable(true)
+        println("Installed pre-commit hook.")
+    }
 }

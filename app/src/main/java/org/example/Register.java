@@ -9,6 +9,7 @@ public class Register implements Cloneable {
     private long registerValue;
 
     public Register(int id, int registerLength) {
+        this.registerID = id;
         this.registerArray = new boolean[registerLength];
         this.registerValue = 0;
     }
@@ -30,6 +31,7 @@ public class Register implements Cloneable {
         return this.registerValue;
     }
 
+    @Override
     public String toString() {
         return "[" + IntStream.range(0, this.registerArray.length)
                 .mapToObj(i -> this.registerArray[i] ? "1" : "0")
@@ -38,11 +40,13 @@ public class Register implements Cloneable {
 
     @Override
     public Register clone() {
-        Register newRegister = new Register(this.registerID, this.registerArray.length);
-        newRegister.registerArray = this.registerArray.clone();
-        newRegister.registerValue = this.registerValue;
-
-        return newRegister;
+        try {
+            Register newRegister = (Register) super.clone();
+            newRegister.registerArray = this.registerArray.clone();
+            return newRegister;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); // cannot happen: Register implements Cloneable
+        }
     }
 
 }

@@ -6,7 +6,7 @@ public class BinaryOperations {
     public static boolean[] Add(boolean[] A, boolean[] B) throws Exception {
         if (A.length != B.length) {
             throw new Exception(String.format(
-                    "register arrays must be of equal length.\ncannot add register of %d length with another %d length.",
+                    "register arrays must be of equal length.%ncannot add register of %d length with another %d length.",
                     A.length, B.length));
         }
         long AD = Utils.bitArrayToTwosComplement(A);
@@ -15,7 +15,7 @@ public class BinaryOperations {
         boolean carry = false;
         for (int i = A.length - 1; i >= 0; i--) {
             res[i] = A[i] ^ B[i] ^ carry;
-            carry = (A[i] & B[i]) | (B[i] & carry) | (A[i] & carry);
+            carry = (A[i] && B[i]) || (B[i] && carry) || (A[i] && carry);
         }
         long RD = Utils.bitArrayToTwosComplement(res);
         if (AD > 0 && BD > 0 && RD < 0) {
@@ -116,7 +116,7 @@ public class BinaryOperations {
         boolean carry = true;
         for (int i = res.length - 1; i >= 0; i--) {
             boolean nVal = res[i] ^ carry;
-            carry = res[i] & carry;
+            carry = res[i] && carry;
             res[i] = nVal;
         }
         return res;
