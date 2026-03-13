@@ -25,6 +25,9 @@ public final class RType extends Instruction {
         operandRegisterIDs[0] = Integer.parseInt(opStrs.get(0).substring(1).strip());
         operandRegisterIDs[1] = Integer.parseInt(opStrs.get(1).substring(1).strip());
         operandRegisterIDs[2] = Integer.parseInt(opStrs.get(2).substring(1).strip());
+
+        this.ei = EncodedInstruction.RTypeEncoding(opcode, operandRegisterIDs[0], operandRegisterIDs[1],
+                operandRegisterIDs[2]);
     }
 
     @Override
@@ -34,6 +37,7 @@ public final class RType extends Instruction {
                 throw new Exception("invalid register number");
             }
         }
+
         Register rd = rf.getRegister(operandRegisterIDs[0]);
         Register rs = rf.getRegister(operandRegisterIDs[1]);
         Register rt = rf.getRegister(operandRegisterIDs[2]);
@@ -57,6 +61,7 @@ public final class RType extends Instruction {
                 throw new Exception("unsupported opcode");
         }
         rd.setRegisterArray(result);
+        this.affectedRegister = rd.clone();
     }
 
     @Override
@@ -103,6 +108,16 @@ public final class RType extends Instruction {
                 result = "unsupported opcode";
         }
         return result;
+    }
+
+    @Override
+    public String getBitEncodedForm() {
+        return this.ei.toString();
+    }
+
+    @Override
+    public Register getAffectedRegister() {
+        return this.affectedRegister == null ? null : this.affectedRegister.clone();
     }
 
 }

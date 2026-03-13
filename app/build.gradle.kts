@@ -14,6 +14,7 @@ plugins {
     pmd
     id("com.github.spotbugs") version "6.0.27"
     id("net.ltgt.errorprone") version "4.1.0"
+    id("me.champeau.jmh") version "0.7.3"
 }
 
 repositories {
@@ -53,7 +54,7 @@ tasks.named<Test>("test") {
 
 // ErrorProne — enable on all compile tasks
 tasks.withType<JavaCompile>().configureEach {
-    options.errorprone.isEnabled = true
+    options.errorprone.isEnabled = !name.contains("Jmh", ignoreCase = true)
 }
 
 // PMD — error-prone patterns and real bugs only (bestpractices excluded: too noisy on test code)
@@ -71,6 +72,17 @@ spotbugs {
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
     reports.create("html") { required = true }
     reports.create("xml") { required = true }
+}
+
+// JMH benchmarks
+jmh {
+    warmupIterations = 3
+    warmup = "1s"
+    iterations = 5
+    fork = 1
+    timeOnIteration = "1s"
+    benchmarkMode = listOf("avgt")
+    timeUnit = "ns"
 }
 
 // Fat/executable JAR — bundles all runtime deps so the jar is self-contained

@@ -1,5 +1,118 @@
 # MIPS Simulator Specification
 
+## Class Diagram
+
+```mermaid
+classDiagram
+    class Instruction {
+        <<abstract>>
+        #EncodedInstruction ei
+        #Register affectedRegister
+        #int insID
+        #String insLiteral
+        #String opcode
+        #int[] operandRegisterIDs
+        +of(int insID, String insLiteral)$ Instruction
+        +getInstructionId() int
+        +getInstructionLiteral() String
+        +getOperandRegisters()* int[]
+        +getCycles()* int
+        +execute(RegisterFile rf)* void
+        +getBitEncodedForm()* String
+        +getAffectedRegister()* Register
+    }
+
+    class RType {
+        <<final>>
+        +getBitEncodedForm() String
+        +getAffectedRegister() Register
+        +execute(RegisterFile rf) void
+        +getOperandRegisters() int[]
+        +getCycles() int
+        +toString() String
+    }
+
+    class IType {
+        <<final>>
+        -long immediate
+        +getBitEncodedForm() String
+        +getAffectedRegister() Register
+        +execute(RegisterFile rf) void
+        +getOperandRegisters() int[]
+        +getCycles() int
+        +toString() String
+    }
+
+    class EncodedInstruction {
+        -String opcodeBits
+        -String operandBits
+        +EncodedInstruction(String opcodeBits, String operandBits)
+        +RTypeEncoding(String opcode, long rdID, long rsID, long rtID)$ EncodedInstruction
+        +ITypeEncoding(String opcode, long rdID, long rsID, long immediate)$ EncodedInstruction
+        +toString() String
+    }
+
+    class RegisterFile {
+        -HashMap~Integer, Register~ registers
+        -int registerCount
+        +RegisterFile(int totalRegisters, int registerLength)
+        +getRegister(int id) Register
+        +setRegister(int id, Register register) void
+        +size() int
+    }
+
+    class Register {
+        -int registerID
+        -boolean[] registerArray
+        -long registerValue
+        +getRegisterID() int
+        +setRegisterArray(boolean[] arr) void
+        +getRegisterArray() boolean[]
+        +getDecimal() long
+        +clone() Register
+        +toString() String
+    }
+
+    class BinaryOperations {
+        <<static>>
+        +Add(boolean[] a, boolean[] b)$ boolean[]
+        +Subtract(boolean[] a, boolean[] b)$ boolean[]
+        +Multiply(boolean[] a, boolean[] b)$ boolean[]
+        +Divide(boolean[] a, boolean[] b)$ boolean[]
+        +AddI(boolean[] a, long imm)$ boolean[]
+        +SubI(boolean[] a, long imm)$ boolean[]
+        +MulI(boolean[] a, long imm)$ boolean[]
+        +DivI(boolean[] a, long imm)$ boolean[]
+    }
+
+    class Utils {
+        <<static>>
+        +bitArrayToTwosComplement(boolean[] registerArray)$ long
+        +powerN(long number, int power)$ long
+        +decimalToBooleanArray(long decimal, int size)$ boolean[]
+        +bitStringFromDecimalWithSize(long decimal, int size)$ String
+    }
+
+    class App {
+        +main(String[] args)$ void
+    }
+
+    Instruction <|-- RType
+    Instruction <|-- IType
+    App ..> Instruction : creates via of()
+    App ..> Register : prints affected registers
+    App ..> RegisterFile : uses
+    RType ..> RegisterFile : uses
+    IType ..> RegisterFile : uses
+    Instruction --> EncodedInstruction : stores
+    RegisterFile "1" *-- "32" Register : contains
+    RType ..> BinaryOperations : uses
+    IType ..> BinaryOperations : uses
+    Register ..> Utils : uses
+    BinaryOperations ..> Utils : uses
+    EncodedInstruction ..> Utils : uses
+```
+
 ## Instruction Format
 
 ```
@@ -11,7 +124,7 @@
 <instruction> ::= <r-instruction> | <i-instruction> | <pseudo-instruction>
 
 <r-instruction>      ::= <r-opcode> <register> "," <register> "," <register>
-<i-instruction>      ::= <i-opcode> <register> "," <register> "," "#" <number>
+<i-instruction>      ::= <i-opcode> <register> "," <register> "," <signed-number>
 <pseudo-instruction> ::= "mov" <register> "," <register>
 
 <r-opcode>    ::= "add" | "sub" | "mul" | "div"
@@ -24,7 +137,8 @@
                     | "2" <digit>                    (* 20–29 *)
                     | "3" ( "0" | "1" )              (* 30–31 *)
 
-<number>         ::= <non-zero-digit> { <digit> }
+<signed-number>  ::= [ "-" ] <number>
+<number>         ::= "0" | <non-zero-digit> { <digit> }
 
 <non-zero-digit> ::= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 <digit>          ::= "0" | <non-zero-digit>
@@ -32,17 +146,17 @@
 
 ### Instruction Semantics
 
-| Instruction         | Operation     | Notes                                                            |
-| ------------------- | ------------- | ---------------------------------------------------------------- |
-| `add rd, rs, rt`    | rd = rs + rt  | Raises exception on overflow/underflow                           |
-| `sub rd, rs, rt`    | rd = rs − rt  | Implemented as rs + (−rt)                                        |
-| `mul rd, rs, rt`    | rd = rs × rt  | Sign-magnitude multiplication                                    |
-| `div rd, rs, rt`    | rd = rs ÷ rt  | Integer (truncated) division; raises exception on divide-by-zero |
-| `addi rd, rs, #imm` | rd = rs + imm | Immediate addition                                               |
-| `subi rd, rs, #imm` | rd = rs − imm | Immediate subtraction                                            |
-| `muli rd, rs, #imm` | rd = rs × imm | Immediate multiplication                                         |
-| `divi rd, rs, #imm` | rd = rs ÷ imm | Immediate division                                               |
-| `mov rd, rs`        | rd = rs       | Pseudo-instruction; assembler expands to `add rd, rs, r0`        |
+| Instruction        | Operation     | Notes                                                            |
+| ------------------ | ------------- | ---------------------------------------------------------------- |
+| `add rd, rs, rt`   | rd = rs + rt  | Raises exception on overflow/underflow                           |
+| `sub rd, rs, rt`   | rd = rs − rt  | Implemented as rs + (−rt)                                        |
+| `mul rd, rs, rt`   | rd = rs × rt  | Sign-magnitude multiplication                                    |
+| `div rd, rs, rt`   | rd = rs ÷ rt  | Integer (truncated) division; raises exception on divide-by-zero |
+| `addi rd, rs, imm` | rd = rs + imm | Immediate addition                                               |
+| `subi rd, rs, imm` | rd = rs − imm | Immediate subtraction                                            |
+| `muli rd, rs, imm` | rd = rs × imm | Immediate multiplication                                         |
+| `divi rd, rs, imm` | rd = rs ÷ imm | Immediate division                                               |
+| `mov rd, rs`       | rd = rs       | Pseudo-instruction; assembler expands to `add rd, rs, r0`        |
 
 ### Operand Conventions
 
@@ -67,17 +181,42 @@
 
 ## Opcode Encoding
 
-| Mnemonic | Opcode  |
-| -------- | ------- |
-| `mov`    | `00000` |
-| `add`    | `00001` |
-| `sub`    | `00010` |
-| `mul`    | `00011` |
-| `div`    | `00100` |
-| `addi`   | `00101` |
-| `subi`   | `00110` |
-| `muli`   | `00111` |
-| `divi`   | `01000` |
+| Mnemonic | Opcode   |
+| -------- | -------- |
+| `mov`    | `000000` |
+| `add`    | `000001` |
+| `sub`    | `000010` |
+| `mul`    | `000011` |
+| `div`    | `000100` |
+| `addi`   | `000101` |
+| `subi`   | `000110` |
+| `muli`   | `000111` |
+| `divi`   | `001000` |
+
+---
+
+## CLI Invocation
+
+Run format:
+
+```bash
+./gradlew :app:run --args="<file.asm> [register-size]"
+```
+
+- `<file.asm>` is required.
+- `[register-size]` is optional.
+- Supported register sizes: `32` and `64` only.
+- If register size is omitted, the simulator uses `64`.
+
+Examples:
+
+```bash
+./gradlew :app:run --args="test_asm.txt"
+./gradlew :app:run --args="test_asm.txt 32"
+./gradlew :app:run --args="test_asm.txt 64"
+```
+
+Invalid optional sizes cause an argument error.
 
 ---
 
@@ -112,12 +251,20 @@ where $T_{clock}$ is the period of one clock cycle (e.g. 1 ns for a 1 GHz CPU).
 The simulator tracks CPI per instruction and accumulates a **total cycle count** internally over the program.
 
 **Per-instruction output:**
-After each instruction executes, the simulator prints:
+The simulator prints a fixed-width table with these columns:
+
+- PC
+- Decoded
+- Encoded instructions (32-bit)
+- Clock cycles
+
+Each row corresponds to one instruction.
+
+**Post-execution output:**
+After all instruction rows are printed, the simulator prints the affected registers captured during execution as:
 
 ```
-<line-number> <instruction>
-<decoded operation>
-value of affected register: r<N> = <decimal> [<binary array>]
+r<N> -> <bit-array>
 ```
 
 **Program summary:**

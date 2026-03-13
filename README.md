@@ -1,11 +1,33 @@
 As required by course CSX3007 Computer Architecture from Assumption University School of Science and Engineering.
 
+## Running The Simulator
+
+From the project root, run:
+
+```bash
+./gradlew :app:run --args="<file.asm> [register-size]"
+```
+
+- `file.asm` is required.
+- `register-size` is optional and accepts only `32` or `64`.
+- If `register-size` is omitted, the simulator uses `64`.
+
+Examples:
+
+```bash
+./gradlew :app:run --args="test_asm.txt"
+./gradlew :app:run --args="test_asm.txt 32"
+./gradlew :app:run --args="test_asm.txt 64"
+```
+
 ## Class Diagram
 
 ```mermaid
 classDiagram
     class Instruction {
         <<abstract>>
+        #EncodedInstruction ei
+        #Register affectedRegister
         #int insID
         #String insLiteral
         #String opcode
@@ -16,10 +38,14 @@ classDiagram
         +getOperandRegisters()* int[]
         +getCycles()* int
         +execute(RegisterFile rf)* void
+        +getBitEncodedForm()* String
+        +getAffectedRegister()* Register
     }
 
     class RType {
         <<final>>
+        +getBitEncodedForm() String
+        +getAffectedRegister() Register
         +execute(RegisterFile rf) void
         +getOperandRegisters() int[]
         +getCycles() int
@@ -29,9 +55,20 @@ classDiagram
     class IType {
         <<final>>
         -long immediate
+        +getBitEncodedForm() String
+        +getAffectedRegister() Register
         +execute(RegisterFile rf) void
         +getOperandRegisters() int[]
         +getCycles() int
+        +toString() String
+    }
+
+    class EncodedInstruction {
+        -String opcodeBits
+        -String operandBits
+        +EncodedInstruction(String opcodeBits, String operandBits)
+        +RTypeEncoding(String opcode, long rdID, long rsID, long rtID)$ EncodedInstruction
+        +ITypeEncoding(String opcode, long rdID, long rsID, long immediate)$ EncodedInstruction
         +toString() String
     }
 
@@ -48,10 +85,12 @@ classDiagram
         -int registerID
         -boolean[] registerArray
         -long registerValue
+        +getRegisterID() int
         +setRegisterArray(boolean[] arr) void
         +getRegisterArray() boolean[]
         +getDecimal() long
         +clone() Register
+        +toString() String
     }
 
     class BinaryOperations {
@@ -70,13 +109,47 @@ classDiagram
         +main(String[] args)$ void
     }
 
+    class Utils {
+        <<static>>
+        +bitArrayToTwosComplement(boolean[] registerArray)$ long
+        +powerN(long number, int power)$ long
+        +decimalToBooleanArray(long decimal, int size)$ boolean[]
+        +bitStringFromDecimalWithSize(long decimal, int size)$ String
+    }
+
     Instruction <|-- RType
     Instruction <|-- IType
     App ..> Instruction : creates via of()
+    App ..> Register : prints affected registers
     App ..> RegisterFile : uses
     RType ..> RegisterFile : uses
     IType ..> RegisterFile : uses
-    RegisterFile "1" *-- "0..32" Register : contains
+    Instruction --> EncodedInstruction : stores
+    RegisterFile "1" *-- "32" Register : contains
     RType ..> BinaryOperations : uses
     IType ..> BinaryOperations : uses
+    Register ..> Utils : uses
+    BinaryOperations ..> Utils : uses
+    EncodedInstruction ..> Utils : uses
+```
+
+## Benchmarks (JMH)
+
+Benchmark sources are under `app/src/jmh/java/org/mips/benchmarks/`.
+
+- `BinaryOperationsBenchmark`
+  : measures `Add`, `Multiply`, `Divide`.
+- `InstructionExecutionBenchmark`
+  : measures `Instruction.execute(...)` for high-level instruction paths and parser cost via `Instruction.of(...)`.
+
+Run all benchmarks:
+
+```bash
+./gradlew :app:jmh
+```
+
+Run a single benchmark method:
+
+```bash
+./gradlew :app:jmh -Pjmh='org.mips.benchmarks.BinaryOperationsBenchmark.add32'
 ```

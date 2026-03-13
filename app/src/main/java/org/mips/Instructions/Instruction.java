@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.mips.Registers.Register;
 import org.mips.Registers.RegisterFile;
 
 import com.google.common.base.Splitter;
@@ -19,6 +20,8 @@ public abstract class Instruction {
     protected String insLiteral;
     protected String opcode;
     protected int[] operandRegisterIDs;
+    protected EncodedInstruction ei;
+    Register affectedRegister;
 
     public static Instruction of(int insID, String insLiteral) throws Exception {
         List<String> parts = SPACE_SPLITTER.splitToList(Objects.requireNonNull(insLiteral));
@@ -32,7 +35,6 @@ public abstract class Instruction {
         } else if (ITYPE_OPCODES.contains(opcode)) {
             return new IType(insID, insLiteral, opcode, operands);
         } else if (PSEUDO_OPCODES.contains(opcode)) {
-
             return new RType(insID, insLiteral, "add", operands + ",r0");
         }
         throw new Exception("unsupported opcode: " + opcode);
@@ -52,4 +54,8 @@ public abstract class Instruction {
     public abstract int getCycles();
 
     public abstract void execute(RegisterFile rf) throws Exception;
+
+    public abstract String getBitEncodedForm();
+
+    public abstract Register getAffectedRegister();
 }

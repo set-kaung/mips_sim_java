@@ -41,7 +41,7 @@ public class Register implements Cloneable {
     public String toString() {
         return "[" + IntStream.range(0, this.registerArray.length)
                 .mapToObj(i -> this.registerArray[i] ? "1" : "0")
-                .collect(Collectors.joining(" ")) + "]";
+                .collect(Collectors.joining("")) + "]";
     }
 
     @Override

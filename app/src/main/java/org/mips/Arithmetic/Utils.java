@@ -69,4 +69,19 @@ public class Utils {
         return res;
     }
 
+    public static String bitStringFromDecimalWithSize(long decimal, int size) throws Exception {
+        if (decimal >= Math.pow(2, size)) {
+            throw new Exception("decimal too big for given size");
+        }
+        if (decimal == 0) {
+            return "0".repeat(size);
+        }
+
+        StringBuilder sb = new StringBuilder(size);
+        int decimalBitSize = (int) (Math.log((double) decimal) / Math.log(2)) + 1;
+        sb.repeat("0", size - decimalBitSize);
+        sb.append(Long.toString(decimal, 2));
+        return sb.toString();
+    }
+
 }
