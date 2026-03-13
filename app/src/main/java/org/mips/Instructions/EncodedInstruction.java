@@ -41,6 +41,7 @@ public class EncodedInstruction {
         return ei;
     }
 
+    @Override
     public String toString() {
         return this.opcodeBits + " " + this.operandBits;
     }

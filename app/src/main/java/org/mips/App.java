@@ -29,7 +29,7 @@ public class App {
 
     private static final int MIN_ARG_COUNT = 1;
     private static final int MAX_ARG_COUNT = 2;
-    private static final int DEFAULT_REGISTER_SIZE = 64;
+    private static final int DEFAULT_REGISTER_SIZE = 32;
     private static final int REGISTER_COUNT = 32;
     private static final int FILE_ARG_INDEX = 0;
     private static final int REGISTER_SIZE_ARG_INDEX = 1;

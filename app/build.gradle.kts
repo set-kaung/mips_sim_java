@@ -6,6 +6,9 @@
  */
 
 import net.ltgt.gradle.errorprone.errorprone
+import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.testing.Test
+import org.gradle.api.plugins.quality.Pmd
 
 plugins {
     java
@@ -21,6 +24,10 @@ repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
+
+val isReleaseBuild = providers.gradleProperty("release")
+    .map { it.equals("true", ignoreCase = true) }
+    .getOrElse(false)
 
 dependencies {
     // Use JUnit Jupiter for testing.
@@ -54,7 +61,7 @@ tasks.named<Test>("test") {
 
 // ErrorProne — enable on all compile tasks
 tasks.withType<JavaCompile>().configureEach {
-    options.errorprone.isEnabled = !name.contains("Jmh", ignoreCase = true)
+    options.errorprone.isEnabled = isReleaseBuild && !name.contains("Jmh", ignoreCase = true)
 }
 
 // PMD — error-prone patterns and real bugs only (bestpractices excluded: too noisy on test code)
@@ -64,12 +71,16 @@ pmd {
         "category/java/errorprone.xml"
     )
 }
+tasks.withType<Pmd>().configureEach {
+    enabled = isReleaseBuild
+}
 
 // SpotBugs — static bug detection
 spotbugs {
     ignoreFailures = false
 }
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
+    enabled = isReleaseBuild
     reports.create("html") { required = true }
     reports.create("xml") { required = true }
 }

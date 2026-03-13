@@ -10,7 +10,7 @@ From the project root, run:
 
 - `file.asm` is required.
 - `register-size` is optional and accepts only `32` or `64`.
-- If `register-size` is omitted, the simulator uses `64`.
+- If `register-size` is omitted, the simulator uses `32`.
 
 Examples:
 
@@ -18,6 +18,42 @@ Examples:
 ./gradlew :app:run --args="test_asm.txt"
 ./gradlew :app:run --args="test_asm.txt 32"
 ./gradlew :app:run --args="test_asm.txt 64"
+```
+
+## Clean Workspace
+
+Generated outputs are already ignored by git (`build`, `.gradle`, `.kotlin`).
+
+To clean local build artifacts:
+
+```bash
+./gradlew clean
+```
+
+To also clear Gradle's local project cache in this repo:
+
+```bash
+rm -rf .gradle
+```
+
+## Build Modes
+
+Default dev checks (fast):
+
+```bash
+./gradlew :app:check
+```
+
+Release-style checks (enables ErrorProne, PMD, SpotBugs):
+
+```bash
+./gradlew :app:check -Prelease=true
+```
+
+You can also run a normal build with release analysis enabled:
+
+```bash
+./gradlew :app:build -Prelease=true
 ```
 
 ## Class Diagram
